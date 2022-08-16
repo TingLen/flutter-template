@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_code/authentication/bloc/authentication_bloc.dart';
@@ -18,16 +20,21 @@ class AuthInterceptor extends Interceptor {
 
   @override
   Future<void> onResponse(
-      Response<dynamic> response, ResponseInterceptorHandler handler) async {
-    //401代表token过期
-    if (response.statusCode == ExceptionHandle.unauthorized) {
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) async {
+    var data = json.decode(response.data) as Map<String, dynamic>;
+    var code = data['code'] ?? 0;
+    if (response.statusCode == ExceptionHandle.unauthorized ||
+        ExceptionHandle.unauthorized == code) {
       BlocProvider.of<AuthenticationBloc>(
         navigatorKey.currentState!.overlay!.context,
       ).add(
         AuthenticationLogoutRequested(),
       );
+      DioError err = DioError(requestOptions: response.requestOptions);
+      throw err;
     }
-
     super.onResponse(response, handler);
   }
 }
