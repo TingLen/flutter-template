@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_code/router/app_routes.dart';
 import 'package:flutter_code/router/router.dart';
 import 'package:flutter_code/splash/view/splash.dart';
+import 'package:flutter_code/theme/theme.dart';
 import 'package:user_repository/user_repository.dart';
 import 'authentication/authentication.dart';
 import 'home/home.dart';
@@ -56,6 +57,7 @@ class _AppViewState extends State<AppView> {
     AppRoutes.configureRoutes(AppRoutes.router);
     return MaterialApp(
       navigatorKey: navigatorKey,
+      theme: customTheme,
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
